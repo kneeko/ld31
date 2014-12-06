@@ -1,5 +1,5 @@
 Camera = class{
-	init = function(self, n)
+	init = function(self)
 		-- position
 		-- origin
 		self.x = 0
@@ -7,12 +7,8 @@ Camera = class{
 		self.z = 1
 		self.r = 0
 
-		local n = n
-		local p = 1 / n
-		self.p = p
-		self.n = n
 
-		self.w = lg.getWidth() * p
+		self.w = lg.getWidth()
 		self.h = lg.getHeight()
 	end,
 
@@ -22,14 +18,12 @@ Camera = class{
 		local r = self.r
 		local w = self.w
 		local h = self.h
-		local p = self.p
-		local n = self.n
 
 		lg.push()
 		lg.scale(z)
 
 		-- this doesn't handle rotation correctly
-		local ox = w / (2 * z) + w*(n-1)*0.5
+		local ox = w / (2 * z)
 		local oy = h / (2 * z)
 
 		-- rotate around center of viewport

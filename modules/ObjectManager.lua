@@ -77,9 +77,9 @@ ObjectManager = class{
 	end,
 
 	-- called by the viewport manager
-	draw = function(self, identifier, camera, bound)
+	draw = function(self, ...)
 		local renderer = self.renderer
-		renderer:draw(identifier, camera, bound)
+		renderer:draw(...)
 	end,
 
 	callback = function(self, method, ...)

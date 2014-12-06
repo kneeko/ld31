@@ -50,7 +50,12 @@ ObjectRenderer = class{
 							or x + l > cr
 							or y + t > cb
 							or y + b < ct
-						return (not culled) and (z >= 0)
+						local edgecase = (x + l > cr and x + r < cl) or (y + t > cb and y + b < ct)
+
+						-- @todo
+						-- handle edge case where object is larger than viewport
+
+						return (not culled) and (z >= 0) and (not edgecase)
 					end
 
 					-- @todo create an iterator function for this inside the entity class
@@ -67,7 +72,7 @@ ObjectRenderer = class{
 					end
 					
 				end
-				if visible then
+				if visible or object._uncullable then
 					queue[identifier][count] = key
 					count = count + 1
 					object._queued = true
@@ -90,8 +95,8 @@ ObjectRenderer = class{
 	end,
 	
 	-- this is called on a per-viewport basis
-	draw = function(self, identifier, camera, bound)
-	
+	draw = function(self, identifier, camera, bound, mode)
+
 		local objects = self.objects
 		local queue = self.queue
 		local count = 0
@@ -101,7 +106,7 @@ ObjectRenderer = class{
 			if object then
 				local projection = object.projections[identifier]
 				if object.draw then
-					object:draw(object:context(projection, identifier))
+					object:draw(mode, object:context(projection, identifier))
 				end
 				if object._debug then
 					object:debug(identifier)

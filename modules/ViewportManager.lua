@@ -1,27 +1,29 @@
 ViewportManager = class{
-	init = function(self, scene, n)
+	init = function(self, manager)
 
-		self.scene = scene
-
-		-- todo: make multiple viewports coherent
 		local viewports = {}
-		local v = n or 1
-		local interaxial = -100
-		for i = 1, v do
-			local step = (i - 1) / v
-			local w = 1 / v
-			viewports[#viewports + 1] = Viewport(v, step, w, interaxial)
-		end
-		self.viewports = viewports
 
-		-- used for reinit on resize
-		self.n = n
+		-- @todo
+		-- force viewport order
+		-- figure out viewport ordering/culling bug
+
+		local viewport = Viewport(1, 1)
+		viewport.mode = 'default'
+		viewports[1] = viewport
+
+		--local viewport = Viewport(0.7, 1.6)
+		local viewport = Viewport(0.5, 3)
+		viewport.mode = 'scanner'
+		viewports[2] = viewport
+
+		self.viewports = viewports
 
 		-- development camera zooming
 		self.zooming = false
 
-		local controller = ViewportController(scene, viewports)
+		local controller = ViewportController(manager, viewports)
 		self.controller = controller
+		self.manager = manager
 
 	end,
 
@@ -68,7 +70,7 @@ ViewportManager = class{
 
 
 		local viewports = self.viewports
-		local scene = self.scene
+		local manager = self.manager
 		for i = 1, #viewports do
 			-- TODO fix the angled translation
 			--local x = cx-- + dx-- * math.cos(angle) + dy * math.sin(angle)
@@ -89,17 +91,18 @@ ViewportManager = class{
 			viewport:update(dt)
 			
 			-- prepare projections of scene objects for drawing
-			viewport:prepare(scene)
+			viewport:prepare(manager)
 
 		end
 	end,
 
 	draw = function(self)
 
-		local scene = self.scene
+		local manager = self.manager
 		local viewports = self.viewports
 		for i = 1, #viewports do
-			viewports[i]:draw(scene)
+			local viewport = viewports[i]
+			viewport:draw(manager)
 		end
 
 		-- controller debug
@@ -110,14 +113,14 @@ ViewportManager = class{
 
 	set = function(self, n)
 		-- we need to clean up when this happens
-		local scene = self.scene
+		local manager = self.manager
 		local viewports = self.viewports
 		for i = 1, #viewports do
 			local viewport = viewports[i]
 			local identifier = viewport._identifier:get()
-			scene:flush(identifier)
+			manager:flush(identifier)
 		end
-		self:init(scene, n)
+		self:init(manager, n)
 	end,
 
 	resize = function(self)
@@ -144,9 +147,7 @@ ViewportManager = class{
 			self.zooming = true
 			self.controller.zooming = true
 		end
-		if tonumber(key) then
-			self:set(tonumber(key))
-		end
+		-- pass these to the main viewport?
 	end,
 
 	keyreleased = function(self, key, code)

@@ -26,24 +26,26 @@ Limiter = class{
 		for key, value in pairs(values) do
 			if locked[key] then
 				local rules = ruleset[key]
-				local threshold = rules.threshold
-				if threshold then
+				if rules then
+					local threshold = rules.threshold
+					if threshold then
 
-					local lower = threshold[1]
-					local upper = threshold[2]
-					local target
+						local lower = threshold[1]
+						local upper = threshold[2]
+						local target
 
-					if value <= lower then
-						target = lower
-					elseif value >= upper then
-						target = upper
+						if value <= lower then
+							target = lower
+						elseif value >= upper then
+							target = upper
+						end
+
+						if target then
+							local interpolated = value + (target - value) * dt * 5
+							self:set(key, interpolated)
+						end
+
 					end
-
-					if target then
-						local interpolated = value + (target - value) * dt * 5
-						self:set(key, interpolated)
-					end
-
 				end
 			end
 		end

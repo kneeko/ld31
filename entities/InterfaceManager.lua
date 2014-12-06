@@ -1,0 +1,3 @@
+InterfaceManager = class{
+	
+}

@@ -1,0 +1,3 @@
+SuitcaseChallenge = class{
+	
+}

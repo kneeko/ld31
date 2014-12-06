@@ -8,22 +8,25 @@ function love.load()
 
 	require('dependencies')()
 
+	fonts = FontManager()
 	input = InputManager()
+
 	manager = ObjectManager()
 	viewport = ViewportManager(manager)
 
-	-- caching font manager
-	fonts = FontManager()
+	scene = Scene()
 
 	-- input is passed through the viewport manager
-	-- so that it can be properly projected into world coords
+	-- so that it can be projected into world space
 	input:register(viewport, {'input', 'keyboard'})
+	input:register(scene, {'keyboard'})
 
 end
 
 function love.update(dt)
 	-- inputs should always be updated first
 	input:update(dt)
+	scene:update(dt)
 	manager:update(dt)
 	-- prepares the projections for drawing
 	viewport:update(dt)
@@ -32,6 +35,7 @@ end
 function love.draw()
 	-- everything is drawn through the viewport manager
 	viewport:draw()
+	scene:draw()
 end
 
 function love.mousepressed(x, y, button)

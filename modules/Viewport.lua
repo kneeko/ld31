@@ -1,5 +1,5 @@
 Viewport = class{
-	init = function(self, v, step, stretch, interaxial)
+	init = function(self, s, z)
 
 		local identifier = Identifier()
 		self._identifier = identifier
@@ -7,17 +7,21 @@ Viewport = class{
 
 		print('Created a viewport with identifier: ' .. identifier:get())
 
-		local ww, wh = lg.getWidth(), lg.getHeight()
-		local w = ww * stretch
-		local h = wh
+		local w, h = lg.getWidth(), lg.getHeight()
 
 		local bound = {0, w, 0, h}
-		local position = {step * interaxial, 0, 1}
+		local position = {0, 0, z}
+		local size = {w, h}
+		local angle = 0
+		local scale = {s, s}
+		local origin = {w*0.5, h*0.5}
 
-		self.step = step * ww
 		self.position = position
 		self.bound = bound
-		self.angle = 0
+		self.angle = angle
+		self.scale = scale
+		self.origin = origin
+		self.size = size
 
 		-- limiter ruleset
 		local ruleset = {
@@ -41,8 +45,8 @@ Viewport = class{
 			},
 			-- z (zoom)
 			[3] = {
-				threshold = {0.25 , 1.5},
-				limit = {0.05, 4},
+				threshold = {0.25 , 8},
+				limit = {0.05, 8},
 				filter = function(delta)
 					return delta
 				end,
@@ -80,8 +84,7 @@ Viewport = class{
 		-- scale the viewport bound by the reciprocal of the zoom
 		-- in order to cull at the canvas edge
 		local reciprocal = 1 / z
-		local total = self.total
-		local length = w * 0.5 * (1 / total)
+		local length = w * 0.5
 		local height = h * 0.5
 
 		local l = length - length * reciprocal
@@ -111,7 +114,8 @@ Viewport = class{
 		local camera = self.camera
 		local canvas = self.canvas
 		local identifier = self._identifier:get()
-		local step = self.step
+
+		local mode = self.mode
 
 		-- we're going to draw to this viewport's canvas
 		lg.setCanvas(canvas)
@@ -119,7 +123,7 @@ Viewport = class{
 		
 		-- draw the scene
 		camera:attach()
-		scene:draw(identifier, position, bound)
+		scene:draw(identifier, position, bound, mode)
 		camera:detach()
 
 		-- debug info
@@ -127,22 +131,35 @@ Viewport = class{
 		if debug then
 			local limiter = self.limiter
 			local x, y, z = unpack(position)
-			local s = 'camera (' .. math.floor(x) .. ', ' .. math.floor(y) .. ', ' .. z .. ')'
-			s = s .. '\n' .. lt.getFPS() .. ' fps'
-			limiter:draw()
+			local s = ('camera (%s, %s, %s)\n %s fps\nmode: %s'):format(math.floor(x), math.floor(y), z, lt.getFPS(), mode)
 			lg.setColor(255, 255, 255)
 			lg.print(s, 15, 15)
+			--limiter:draw()
 		end
 
 
-		lg.setCanvas()
+		local angle = self.angle
+		local size = self.size
+		local scale = self.scale
+		local origin = self.origin
 
+		local w, h = unpack(size)
+		local sx, sy = unpack(scale)
+		local ox, oy = unpack(origin)
+
+		local x = w*0.5
+		local y = h*0.5
+
+		lg.setCanvas()
+		lg.setShader()
 		lg.setColor(255, 255, 255)
 		lg.setBlendMode('premultiplied')
 
-		lg.draw(canvas, step)
-		lg.setBlendMode('alpha')
+		-- draw the viewport canvas
+		-- which has the scene rendered to it
+		lg.draw(canvas, x, y, angle, sx, sy, ox, oy)
 
+		lg.setBlendMode('alpha')
 
 	end,
 
