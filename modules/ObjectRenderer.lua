@@ -113,8 +113,8 @@ ObjectRenderer = class{
 				end
 				count = count + 1
 			else
-				print('a non object was passed into the drawstack', key)
-				-- this needs to be resolved...
+				-- @todo resolve this error
+				--print('a non object was passed into the drawstack', key)
 			end
 		end
 

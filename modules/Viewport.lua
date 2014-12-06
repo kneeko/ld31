@@ -150,8 +150,10 @@ Viewport = class{
 		local x = w*0.5
 		local y = h*0.5
 
+		local shader = self.shader
+
 		lg.setCanvas()
-		lg.setShader()
+		lg.setShader(shader)
 		lg.setColor(255, 255, 255)
 		lg.setBlendMode('premultiplied')
 
@@ -160,6 +162,7 @@ Viewport = class{
 		lg.draw(canvas, x, y, angle, sx, sy, ox, oy)
 
 		lg.setBlendMode('alpha')
+		lg.setShader()
 
 	end,
 

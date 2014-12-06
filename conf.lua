@@ -4,7 +4,7 @@ function love.conf(t)
 	-- require('cupid')
 
 	-- windows console
-	--t.console = true
+	t.console = true
 
 	t.version = '0.9.1'
 	t.window.title = 'ld31'

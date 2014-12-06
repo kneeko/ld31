@@ -183,6 +183,8 @@ ObjectManager = class{
 			sorter:remove(key)
 			available[#available + 1] = key
 			objects[key] = nil
+			-- does this actually remove all other references?
+			object = nil
 		end
 		
 	end,

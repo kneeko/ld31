@@ -1,6 +1,10 @@
+-- generates a series of suitcases based on parameters
+-- feeds those suitcases to the suitcase manager
+
+
 Flight = class{
+
 	init = function(self)
-		Suitcase()
 	end,
 
 	update = function(self, dt)
@@ -8,6 +12,5 @@ Flight = class{
 
 	complete = function(self)
 	end,
-
-
+	
 }

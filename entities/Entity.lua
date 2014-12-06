@@ -51,7 +51,15 @@ Entity = class{
 					parent:project(identifier, camera, viewport)
 					parent_projection = parent.projections[identifier]
 				end
-				ox, oy, oz = unpack(parent_projection)
+				-- @todo
+				-- currently broken for angles and scaling (I think...)
+				-- fix angle
+				local px, py, pz = unpack(parent_projection)
+				local pox, poy = unpack(parent.origin)
+				ox = px - pox
+				oy = py - poy
+				oz = pz
+				
 			end
 			projection[1] = ox + x + cx - cx * reciprocal
 			projection[2] = oy + y + cy - cy * reciprocal

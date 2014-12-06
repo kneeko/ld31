@@ -11,9 +11,18 @@ ViewportManager = class{
 		viewport.mode = 'default'
 		viewports[1] = viewport
 
-		--local viewport = Viewport(0.7, 1.6)
-		local viewport = Viewport(0.5, 3)
+		local viewport = Viewport(0.7, 1.8)
 		viewport.mode = 'scanner'
+		-- @todo proper viewport offset
+
+		-- @temp shader test
+		local shader = lg.newShader('shaders/crt.frag')
+		local w, h = lg.getWidth(), lg.getHeight()
+		shader:send('inputSize', {w, h})
+		shader:send('outputSize', {w, h})
+		shader:send('textureSize', {w, h})
+		--viewport.shader = shader
+
 		viewports[2] = viewport
 
 		self.viewports = viewports
