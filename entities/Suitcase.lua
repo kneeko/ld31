@@ -29,8 +29,8 @@ Suitcase = class{
 
 		self:pack()
 
-
 		self.solved = false
+		self.missed = false
 
 		manager:register(self)
 
@@ -70,12 +70,14 @@ Suitcase = class{
 		local answer = self.answer
 		local correct = tonumber(attempt) == answer
 		if correct then
+			signal.emit('correct', tonumber(answer))
 			self.solved = true
 		end
 		return correct
 	end,
 
 	destroy = function(self)
+
 		local contents = self.contents
 		if #contents > 0 then
 			for i = 1, #contents do
@@ -119,6 +121,8 @@ Suitcase = class{
 			}
 
 		}
+
+		print(stock[1].stock)
 
 		-- these parameters should be passed or the content could be generated and then stuffed into the suitcase
 
@@ -183,16 +187,15 @@ Suitcase = class{
 
 					if allowed then
 						table.insert(contents, item)
-						print('added')
 						placed = true
 						break
 					else
-						item:_destroy()
 						attempts = attempts - 1
 					end
 
 					if attempts == 0 then
 						placed = true
+						item:_destroy()
 						break
 					end
 				end

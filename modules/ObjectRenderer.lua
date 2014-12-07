@@ -101,17 +101,22 @@ ObjectRenderer = class{
 		local queue = self.queue
 		local count = 0
 		local keys = queue[identifier] or {}
+		local drawn = {}
 		for _,key in ipairs(keys) do
 			local object = objects[key]
 			if object then
-				local projection = object.projections[identifier]
-				if object.draw then
-					object:draw(mode, object:context(projection, identifier))
+				if not drawn[key] then
+					local projection = object.projections[identifier]
+					if object.draw then
+						object:draw(mode, object:context(projection, identifier))
+					end
+					if object._debug and mode == 'scanner' then
+						object:debug(identifier)
+					end
+					-- hacky fix for ensuring an object isn't in the drawstack twice
+					drawn[key] = true
+					count = count + 1
 				end
-				if object._debug and mode == 'scanner' then
-					object:debug(identifier)
-				end
-				count = count + 1
 			else
 				-- @todo resolve this error
 				--print('a non object was passed into the drawstack', key)

@@ -39,8 +39,10 @@ function Registry:register(s, f)
 end
 
 function Registry:emit(s, ...)
-	for f in pairs(self[s]) do
-		f(...)
+	if type(self[s]) == "table" then
+		for f in pairs(self[s]) do
+			f(...)
+		end
 	end
 end
 

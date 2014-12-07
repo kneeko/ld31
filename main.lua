@@ -33,6 +33,9 @@ function love.load()
 
 end
 
+
+			-- @todo
+			-- handle numpad
 function love.update(dt)
 	-- inputs should always be updated first
 	input:update(dt)

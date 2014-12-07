@@ -1,4 +1,4 @@
-Notification = class{
+Prompt = class{
 	init = function(self, string)
 
 		-- incoming flight from JFK [flag]?
@@ -22,9 +22,6 @@ Notification = class{
 
 		self.string = string
 		self.font = font
-		self.lifetime = 1
-
-		print('notifying: ' .. string)
 
 		manager:register(self)
 
@@ -32,13 +29,6 @@ Notification = class{
 
 	update = function(self, dt)
 
-		-- pop up and down
-		local lifetime = self.lifetime
-		self.lifetime = math.max(lifetime - dt, 0)
-		if self.lifetime == 0 then
-			print('destroying...')
-			self:_destroy()
-		end
 
 	end,
 

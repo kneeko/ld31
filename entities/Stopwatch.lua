@@ -1,12 +1,13 @@
 Stopwatch = class{
 	init = function(self)
 
-		local padding = 90
-		local w = lg.getWidth() * 0.7 - padding
-		local h = 25
-		local x = padding
+		local padding = 30
+		local w = lg.getWidth() - padding * 2
+		local h = 20
+		local x = 0
+		local y = 20
 
-		local position = {x, -15, 1}
+		local position = {x, y, 1}
 		local size = {w, h}
 		local origin = {0, h}
 		local scale = {1, 1}
@@ -49,7 +50,7 @@ Stopwatch = class{
 		local origin = self.origin
 		local ox, oy = unpack(origin)
 
-		if mode == 'interface' then
+		if mode == 'scanner' then
 			lg.setLineWidth(1)
 			lg.setColor(255, 255, 255)
 			lg.rectangle('line', x - ox, y - oy, w, h)

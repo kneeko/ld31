@@ -6,12 +6,15 @@
 Indicator = class{
 	init = function(self)
 
-		local position = {100, 0, 1}
-		local size = {20, 20}
-		local scale = {1, 1}
-		local origin = {0, 0}
+		local position = {0, 0, 1}
 
-		self._debug = true
+		local w = 20
+		local h = 20
+		local size = {w, h}
+		local scale = {1, 1}
+		local origin = {w*0.5, h*0.5}
+
+		self._debug = false
 
 		self.position = position
 		self.size = size
@@ -50,6 +53,9 @@ Indicator = class{
 		if mode == 'interface' then
 			local color = self.color
 			lg.setColor(color)
+			if self.lit then
+				lg.setColor(255, 0, 0)
+			end
 			lg.rectangle('fill', x - ox, y - oy, w, h)
 		end
 

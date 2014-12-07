@@ -37,4 +37,14 @@ SuitcaseManager = class{
 		end
 
 	end,
+
+	flush = function(self)
+		local suitcases = self.suitcase
+		if suitcases then
+			for i,suitcase in ipairs(suitcases) do
+				suitcase._destroy()
+				table.remove(suitcases, i)
+			end
+		end
+	end,
 }

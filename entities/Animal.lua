@@ -11,7 +11,7 @@ Animal = class{
 	init = function(self)
 
 		self._type = 'animal'
-		self._debug = true
+		self._debug = false
 
 		local x = 30 + 300 * math.random()
 		local y = 30 + 100 * math.random()

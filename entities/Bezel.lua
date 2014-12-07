@@ -28,6 +28,11 @@ Bezel = class{
 		self.lives = lives
 
 		local axles = {}
+
+		-- @todo place these manually
+
+
+		--[[
 		for i = 1, 4 do
 			-- place axles
 			local axle = Axle()
@@ -36,6 +41,16 @@ Bezel = class{
 
 			table.insert(axles, axle)
 		end
+		]]--
+
+		local left = Axle()
+		local right = Axle()
+
+		left.position[1] = 90
+		right.position[1] = sw - 60
+
+		table.insert(axles, left)
+		table.insert(axles, right)
 
 		self.axles = axles
 
@@ -57,5 +72,10 @@ Bezel = class{
 			lg.rectangle('line', x, y, lg.getWidth() * 0.7, lg.getHeight() * 0.7)
 
 		end
+	end,
+
+	clear = function(self)
+		local lives = self.lives
+		lives:clear()
 	end,
 }

@@ -14,11 +14,9 @@ Flight = class{
 		-- @todo
 		-- add a variable delay for this
 
-		--
-
-		local delay = 0.2
+		local delay = 0.5
 		local f = function()
-			local n = 10
+			local n = 8
 			local suitcases = {}
 			for i = 1, n do
 				
@@ -37,16 +35,22 @@ Flight = class{
 			
 			local manager = scene.suitcases
 			local scanner = scene.scanner
+
+			scanner:start()
+
 			local conveyor = scanner.conveyor
 			manager.suitcases = suitcases
 			conveyor:resume()
 
 			print('generated ' .. n .. ' suitcases')
+
+			-- @todo
+			-- call destroy on the manager?
+
 		end
 
 		self.callback = f
 		self.delay = delay
-
 
 	end,
 

@@ -3,7 +3,6 @@
 Scanner = class{
 	init = function(self)
 
-
 		local bezel = Bezel()
 		self.bezel = bezel
 
@@ -16,8 +15,7 @@ Scanner = class{
 
 		self.timer = 0
 
-		
-
+		self.active = false
 
 	end,
 
@@ -48,11 +46,11 @@ Scanner = class{
 	proceed = function(self)
 
 		local scene = self._scene
+		local active = self.active
 		local suitcases = scene.suitcases
 		local suitcase = suitcases:pop()
 		local conveyor = self.conveyor
-		if suitcase then
-			print('got a suitcase!')
+		if suitcase and active then
 			conveyor:process(suitcase)
 		end
 
@@ -64,6 +62,14 @@ Scanner = class{
 
 	clear = function(self)
 		self.scanning = nil
+		local bezel = self.bezel
+		bezel:clear()
+	end,
+
+	abort = function(self)
+		local conveyor = self.conveyor
+		conveyor:abort()
+		self.active = false
 	end,
 
 	keypressed = function(self, key, code)
@@ -72,60 +78,92 @@ Scanner = class{
 		local bezel = self.bezel
 		local alarm = bezel.alarm
 		local scanning = self.scanning
+		local active = self.active
 
 		-- @todo
 		-- if not scanning, we should find out what would be answered anyway
 		-- and do so
 
+		-- if the conveyor has been paused
 		if scanning then
 
-			-- @todo find a good place to put this
-			-- answer checking code and response
-
-			-- since the ui will have some part in this
-			-- maybe it makes sense to pass the suitcase to ui?
-
-			if tonumber(key) then
-				local correct = scanning:bid(key)
-				if correct then
-					conveyor:resume()
-					scanning.answer = 'correct!'
-					alarm:set('success')
-				else
-					conveyor:resume()
-					scanning.answer = 'wrong'
-					alarm:set('failure')
-				end
-				scanning.solved = true
+			local suitcase = scanning
+			local guessed = self:guess(suitcase, key)
+			if guessed then
+				conveyor:resume()
 			end
-			
 
 		else
 
-			-- without pausing, try to answer anyway?
-			local nearest, selected = conveyor:nearest()
-			if selected then
-				if tonumber(key) then
-					local correct = selected:bid(key)
-					if correct then
-						selected.answer = 'correct!'
-						alarm:set('success')
-					else
-						selected.answer = 'wrong'
-						alarm:set('failure')
-					end
-					selected.solved = true
+			-- answer while still moving
+			local nearest, suitcase = conveyor:nearest()
+			if suitcase then
+				local guessed = self:guess(suitcase, key)
+				if guessed then
+					suitcase.solved = true
 				end
 			end
 
 		end
 
 		if key == ' ' then
-			conveyor:toggle()
+			if active then
+				conveyor:toggle()
+			end
 		end
+
+	end,
+
+	guess = function(self, suitcase, guess, success, failure)
+
+		local bezel = self.bezel
+		local alarm = bezel.alarm
+
+		local active = self.active
+
+		local valid = active and tonumber(guess)
+
+		-- @todo
+		-- handle numpad
+
+		if valid then
+
+			local correct = suitcase:bid(guess)
+
+			if correct then
+				suitcase.answer = 'correct!'
+				suitcase.solved = true
+				alarm:set('success')
+				if success then
+					success()
+				end
+			else
+				suitcase.answer = 'wrong'
+				suitcase.missed = true
+				suitcase.solved = true
+				alarm:set('failure')
+				signal.emit('wrong')
+				if failure then
+					failure()
+				end
+			end
+
+			return true
+
+		else
+			print('not active')
+		end
+
+
+		return false
 
 	end,
 
 	keyreleased = function(self, key, code)
 	end,
+
+	start = function(self)
+		self.active = true
+		print('starting scanner')
+	end
 }

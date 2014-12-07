@@ -13,10 +13,11 @@ Conveyor = class{
 		self.queue = queue
 		self.timer = 0
 
-		self.speed = 300
+		self.speed = 600
 		self.throttle = 0
 		self.acceleration = 2
 		self.moving = false
+		self.aborting = falase
 		self.target = 0
 		self.threshold = {300, 300}
 
@@ -32,6 +33,7 @@ Conveyor = class{
 
 		-- this value will depend on the size of the largest suitcase and the screen width
 		self.max = lg.getWidth() * (1 + 0.5)
+		self.limit = lg.getWidth() * 0.8
 
 	end,
 
@@ -86,11 +88,23 @@ Conveyor = class{
 		end
 
 		-- move stuff around
+		local aborting = self.aborting
+		local active = self.active
 		local queue = self.queue
 		local max = self.max
+		local limit = self.limit
 		for i,suitcase in ipairs(queue) do
 			local position = suitcase.position
 			position[1] = position[1] + dx
+			if position[1] > limit then
+				if (not suitcase.missed) and (not suitcase.solved) then
+					-- only if active
+					if active and (not aborting) then
+						suitcase.missed = true
+						signal.emit('wrong')
+					end
+				end
+			end
 			if position[1] > max then
 				suitcase:destroy()
 				table.remove(queue, i)
@@ -116,14 +130,18 @@ Conveyor = class{
 		-- distance the conveyor has moved since last reset
 		self.traveled = traveled + dx
 
+		-- if met, add a new suitcase
 		if self.traveled >= upcoming then
 			local scanner = self.scanner
 			scanner:proceed()
 		end
 
 		local queue = self.queue
-		if #queue == 0 then
-			self:flush()
+		if #queue == 0 and moving then
+			if active then
+				self:flush()
+				signal.emit('completed')
+			end
 		end
 
 		-- if a suitcase is being scanned
@@ -165,7 +183,26 @@ Conveyor = class{
 	end,
 
 	flush = function(self)
+		print('flushing conveyor')
+		-- this seems dangerous
+		-- and is probably the source of the other problem...
+		self.traveled = 0
+		self.upcoming = 0
 		self.flushing = true
+		self.active = false
+	end,
+
+	abort = function(self)
+
+		print('aborting conveyor')
+		self.moving = true
+		self.flushing = false
+		self.active = true
+		self.aborting = true
+		--self.aborting = true
+
+		local scanner = self.scanner
+		scanner.scanning = nil
 	end,
 
 	-- @todo
@@ -222,17 +259,18 @@ Conveyor = class{
 		-- resume motion
 		self.moving = true
 		self.flushing = false
+		self.active = true
+		self.aborting = false
 
 		-- clear the centering target
 
 		-- remove the selected object from the scanner input
 		local scanner = self.scanner
-		scanner:clear()
+		scanner.scanning = nil
 
 	end,
 
 	toggle = function(self)
-		print('toggling')
 		local moving = self.moving
 		if moving then
 			self:pause()
@@ -243,20 +281,28 @@ Conveyor = class{
 
 	process = function(self, suitcase)
 
-		-- add a suitcase to the queue
-		local queue = self.queue
-		table.insert(queue, suitcase)
+		local flushing = self.flushing
+		local aborting = self.aborting
+		if (not flushing) and (not aborting) then
 
-		local upcoming = self.upcoming
-		local step = self.step
+			-- add a suitcase to the queue
+			local queue = self.queue
+			table.insert(queue, suitcase)
 
-		self.upcoming = upcoming + step
+			local upcoming = self.upcoming
+			local step = self.step
 
-		-- @todo
-		-- after a certain number in the queue
-		-- we can pretty darn sure these are no longer visible
+			self.upcoming = upcoming + step
 
-		-- this won't work for distance based stuff
-		-- i need to remove them based on distance...
+			print('processing suitcase ' .. suitcase._key)
+
+			-- @todo
+			-- after a certain number in the queue
+			-- we can pretty darn sure these are no longer visible
+
+			-- this won't work for distance based stuff
+			-- i need to remove them based on distance...
+
+		end
 	end,
 }
