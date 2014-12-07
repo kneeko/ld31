@@ -99,8 +99,8 @@ Viewport = class{
 
 		-- update the camera position
 		local camera = self.camera
-		local ox = w * 0.5
-		local oy = h * 0.5
+		local origin = self.origin
+		local ox, oy = unpack(origin)
 		local angle = self.angle
 		camera:set(x + ox, y + oy, z)
 		camera:rotate(angle)

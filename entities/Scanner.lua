@@ -3,11 +3,21 @@
 Scanner = class{
 	init = function(self)
 
+
+		local bezel = Bezel()
+		self.bezel = bezel
+
 		local conveyor = Conveyor()
 		conveyor.scanner = self
 		self.conveyor = conveyor
 
+		local base = Base()
+		self.base = base
+
 		self.timer = 0
+
+		
+
 
 	end,
 
@@ -40,9 +50,9 @@ Scanner = class{
 		local scene = self._scene
 		local suitcases = scene.suitcases
 		local suitcase = suitcases:pop()
+		local conveyor = self.conveyor
 		if suitcase then
 			print('got a suitcase!')
-			local conveyor = self.conveyor
 			conveyor:process(suitcase)
 		end
 
@@ -59,7 +69,14 @@ Scanner = class{
 	keypressed = function(self, key, code)
 
 		local conveyor = self.conveyor
+		local bezel = self.bezel
+		local alarm = bezel.alarm
 		local scanning = self.scanning
+
+		-- @todo
+		-- if not scanning, we should find out what would be answered anyway
+		-- and do so
+
 		if scanning then
 
 			-- @todo find a good place to put this
@@ -73,14 +90,34 @@ Scanner = class{
 				if correct then
 					conveyor:resume()
 					scanning.answer = 'correct!'
+					alarm:set('success')
 				else
 					conveyor:resume()
+					scanning.answer = 'wrong'
+					alarm:set('failure')
 				end
+				scanning.solved = true
 			end
 			
 
-		elseif key == 'n' then
-			self:proceed()
+		else
+
+			-- without pausing, try to answer anyway?
+			local nearest, selected = conveyor:nearest()
+			if selected then
+				if tonumber(key) then
+					local correct = selected:bid(key)
+					if correct then
+						selected.answer = 'correct!'
+						alarm:set('success')
+					else
+						selected.answer = 'wrong'
+						alarm:set('failure')
+					end
+					selected.solved = true
+				end
+			end
+
 		end
 
 		if key == ' ' then

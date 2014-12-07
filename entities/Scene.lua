@@ -15,8 +15,11 @@ Scene = class{
 		self.suitcases = suitcases
 		self.scanner = scanner
 
-		-- flights passes a series of suitcase params to the suitcase manager
+		flights:add()
+
+		-- flights passes a series of suitcase params to the suitcase manager when a new flight arrives
 		-- suitcases passes those suitcases to the scanner
+
 
 	end,
 
@@ -31,10 +34,8 @@ Scene = class{
 	end,
 
 	draw = function(self)
-
 		local scanner = self.scanner
-		scanner:draw()
-
+		--scanner:draw()
 	end,
 
 	keypressed = function(self, key, code)

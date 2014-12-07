@@ -13,6 +13,8 @@ ViewportManager = class{
 
 		local viewport = Viewport(0.7, 1.8)
 		viewport.mode = 'scanner'
+		viewport.origin[2] = 0.55 * viewport.size[2]
+		viewport.position[2] = -0.05 * viewport.size[2]
 		-- @todo proper viewport offset
 
 		-- @temp shader test
@@ -24,6 +26,11 @@ ViewportManager = class{
 		--viewport.shader = shader
 
 		viewports[2] = viewport
+
+
+		local viewport = Viewport(1, 1)
+		viewport.mode = 'interface'
+		viewports[3] = viewport
 
 		self.viewports = viewports
 
@@ -153,16 +160,16 @@ ViewportManager = class{
 
 	keypressed = function(self, key, code)
 		if key == 'lctrl' then
-			self.zooming = true
-			self.controller.zooming = true
+			--self.zooming = true
+			--self.controller.zooming = true
 		end
 		-- pass these to the main viewport?
 	end,
 
 	keyreleased = function(self, key, code)
 		if key == 'lctrl' then
-			self.zooming = false
-			self.controller.zooming = false
+			--self.zooming = false
+			--self.controller.zooming = false
 		end
 	end,
 }

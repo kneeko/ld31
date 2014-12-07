@@ -24,10 +24,10 @@ extern vec2 textureSize;
 // Controls the intensity of the barrel distortion used to emulate the
 // curvature of a CRT. 0.0 is perfectly flat, 1.0 is annoyingly
 // distorted, higher values are increasingly ridiculous.
-#define distortion 0.1
+#define distortion 0.15
 
 // Simulate a CRT gamma of 2.4.
-#define inputGamma  2.4
+#define inputGamma  2.8
 
 // Compensate for the standard sRGB gamma of 2.2.
 #define outputGamma 2.2
@@ -165,6 +165,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texCoord, vec2 pixel_coords)
 	vec4 weights2 = scanlineWeights(1.0 - uv_ratio.y, col2);
 	
 	vec4 mul_res_f = (col * weights + col2 * weights2);
+	//vec4 mul_res_f = col + col2;
 	vec3 mul_res  = mul_res_f.rgb;
 
 #else

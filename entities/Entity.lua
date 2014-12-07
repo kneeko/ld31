@@ -347,7 +347,7 @@ Entity = class{
 		self.parent = parent
 	end,
 
-	destroy = function(self)
+	_destroy = function(self)
 		self._manager:release(self._key)
 	end,
 }

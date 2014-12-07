@@ -20,7 +20,6 @@ Conveyor = class{
 		self.target = 0
 		self.threshold = {300, 300}
 
-
 		-- @todo
 		-- some kind of step/distance bucket
 		-- for placing suitcases into
@@ -30,6 +29,9 @@ Conveyor = class{
 		self.traveled = 0
 		self.upcoming = 0
 		self.step = 500
+
+		-- this value will depend on the size of the largest suitcase and the screen width
+		self.max = lg.getWidth() * (1 + 0.5)
 
 	end,
 
@@ -43,14 +45,21 @@ Conveyor = class{
 		local target = self.target
 		local throttle = self.throttle
 		local acceleration = self.acceleration
+		local flushing = self.flushing
 
-		if moving then
+		if flushing and throttle == 0 then
+			self.moving = false
+		end
+
+		if moving and (not flushing) then
 			self.throttle = math.min(throttle + dt * acceleration, 1)
 		else
 			self.throttle = math.max(throttle - dt * acceleration, 0)
 		end
 
+
 		local dx
+		local throttle = self.throttle
 		if moving then
 			dx = speed * dt
 			if target > 0 then
@@ -65,17 +74,39 @@ Conveyor = class{
 		end
 
 		-- throttle when moving for smooth acceleration
-		local throttle = self.throttle
+		-- i'd like to apply this to the target switching as well
+		-- but i'm not sure how
 		if moving and dx then
+			dx = dx * throttle
+		end
+
+		local flushing = self.flushing
+		if flushing then
 			dx = dx * throttle
 		end
 
 		-- move stuff around
 		local queue = self.queue
-		for _,suitcase in ipairs(queue) do
+		local max = self.max
+		for i,suitcase in ipairs(queue) do
 			local position = suitcase.position
 			position[1] = position[1] + dx
+			if position[1] > max then
+				suitcase:destroy()
+				table.remove(queue, i)
+			end
 		end
+
+		-- move axels
+		-- this should belong in the bezel
+		local scanner = self.scanner
+		local bezel = scanner.bezel
+		local axles = bezel.axles
+		for _,axle in ipairs(axles) do
+			axle:rotate(dx)
+		end
+
+		-- move belt
 
 		-- add new suitcases based on distance
 		local traveled = self.traveled
@@ -90,9 +121,10 @@ Conveyor = class{
 			scanner:proceed()
 		end
 
-
-
-
+		local queue = self.queue
+		if #queue == 0 then
+			self:flush()
+		end
 
 		-- if a suitcase is being scanned
 		-- set the self.scanner:scan(suitcase)
@@ -103,7 +135,7 @@ Conveyor = class{
 		-- belt and axle will be the moving parts
 		-- this is probably for debug
 		local moving = self.moving
-		local s = ("%s, %s"):format(tostring(moving), self.traveled)
+		local s = ("%s, %s, %s"):format(tostring(moving), self.traveled, self.throttle)
 		lg.print(s, 15, 15)
 
 	end,
@@ -112,22 +144,43 @@ Conveyor = class{
 		-- pause the queue
 		-- and then move to the nearest suitcase
 
-		-- figure out where we need to ease to
 
-		-- shiiit... do i need to know viewport ids for this?....
-		local queue = self.queue
-		local threshold = self.threshold
+
+		local nearest, selected = self:nearest()
+		if nearest and selected then
+
+			self.target = nearest
+				
+			-- tell the scanner to pass input to this suitcase
+			local scanner = self.scanner
+			scanner:scan(selected)
+
+			self.moving = false
+
+		end
+
+	end,
+
+	flush = function(self)
+		self.flushing = true
+	end,
+
+	-- @todo
+	-- accept some arguments to make this more general
+	nearest = function(self)
 
 		local nearest, selected
+		local queue = self.queue
+		local threshold = self.threshold
 		local middle = lg.getWidth()*0.5
-		
+
 		for i,suitcase in ipairs(queue) do
 
 			-- @todo account for ox and scale
 			-- i could have a function in the suitcase that asks
 			-- how near it is? hmmm doesn't really make sense
 			local x, _, _ = unpack(suitcase.position)
-			local eligible = suitcase.answer ~= 'correct!'
+			local eligible = not suitcase.solved
 			if eligible then
 				local distance = middle - x
 				if nearest then
@@ -143,9 +196,6 @@ Conveyor = class{
 			end
 		end
 
-		-- nearest is signed
-		-- since we will use a different threshold for that
-
 		if nearest then
 			local inbound
 			-- lower threshold if the suitcase has already passed the midpoint
@@ -155,15 +205,10 @@ Conveyor = class{
 				inbound = math.abs(nearest) < threshold[2]
 			end
 			if inbound then
-				self.target = nearest
-				
-				-- tell the scanner to pass input to this suitcase
-				local scanner = self.scanner
-				scanner:scan(selected)
-
-				self.moving = false
+				return nearest, selected
 			end
 		end
+
 
 	end,
 
@@ -201,5 +246,11 @@ Conveyor = class{
 
 		self.upcoming = upcoming + step
 
+		-- @todo
+		-- after a certain number in the queue
+		-- we can pretty darn sure these are no longer visible
+
+		-- this won't work for distance based stuff
+		-- i need to remove them based on distance...
 	end,
 }

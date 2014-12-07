@@ -1,16 +1,9 @@
 SuitcaseManager = class{
 	init = function(self)
 
-		local n = 100
-		local suitcases = {}
-		for i = 1, n do
-			local suitcase = Suitcase()
-			suitcase._active = false
-			suitcase._visible = false
-			table.insert(suitcases, suitcase)
-		end
 
-		self.suitcases = suitcases
+		-- these suitcases should come from the flight
+	
 
 		-- @todo
 		-- delete suitcases after a while?
@@ -24,20 +17,23 @@ SuitcaseManager = class{
 	pop = function(self)
 
 		local suitcases = self.suitcases
-		if #suitcases > 0 then
+		if suitcases then
+			if #suitcases > 0 then
 
-			-- get the top suitcase
-			local suitcase = suitcases[#suitcases]
+				-- get the top suitcase
+				local suitcase = suitcases[#suitcases]
 
-			-- enable update and draw methods in object manager
-			suitcase._active = true
-			suitcase._visible = true
+				-- enable update and draw methods in object manager
+				suitcase._active = true
+				suitcase._visible = true
 
-			-- pop it from the list
-			table.remove(suitcases)
-			
-			-- send it to the scanner
-			return suitcase
+				-- pop it from the list
+				table.remove(suitcases)
+				
+				-- send it to the scanner
+				return suitcase
+				
+			end
 		end
 
 	end,
