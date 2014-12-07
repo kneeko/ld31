@@ -22,10 +22,10 @@ Bezel = class{
 		alarm.positioning = 'relative'
 		self.alarm = alarm
 
-		local stopwatch = Stopwatch()
-		stopwatch.parent = self
-		stopwatch.positioning = 'relative'
-		self.stopwatch = stopwatch
+		local lives = Panel()
+		lives.parent = self
+		lives.positioning = 'relative'
+		self.lives = lives
 
 		local axles = {}
 		for i = 1, 4 do

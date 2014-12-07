@@ -14,9 +14,9 @@ Conveyor = class{
 		self.timer = 0
 
 		self.speed = 300
-		self.throttle = 1
+		self.throttle = 0
 		self.acceleration = 2
-		self.moving = true
+		self.moving = false
 		self.target = 0
 		self.threshold = {300, 300}
 
@@ -157,6 +157,9 @@ Conveyor = class{
 
 			self.moving = false
 
+			-- unpause the timer
+			-- set the value to ... what?
+
 		end
 
 	end,
@@ -214,8 +217,11 @@ Conveyor = class{
 
 	resume = function(self)
 
+		print('resuming the conveyor')
+
 		-- resume motion
 		self.moving = true
+		self.flushing = false
 
 		-- clear the centering target
 

@@ -108,7 +108,7 @@ ObjectRenderer = class{
 				if object.draw then
 					object:draw(mode, object:context(projection, identifier))
 				end
-				if object._debug then
+				if object._debug and mode == 'scanner' then
 					object:debug(identifier)
 				end
 				count = count + 1

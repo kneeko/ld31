@@ -245,8 +245,8 @@ Entity = class{
 
 					-- draw the collision modes
 					lg.setColor(255, 255, 255, 100)
-					--lg.rectangle('line', x + edges[1], y + edges[3], w, h)
-					lg.polygon('line', unpack(points))
+					lg.rectangle('line', x + edges[1], y + edges[3], w, h)
+					--lg.polygon('line', unpack(points))
 
 					-- seperate the circles etc etc
 					-- let this be configured more nicely

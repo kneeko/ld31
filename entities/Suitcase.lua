@@ -12,44 +12,25 @@ Suitcase = class{
 		self._type = 'suitcase'
 		self._debug = false
 
-		self.position = {-200, 165, 1}
-		self.size = {400, 270}
-		self.origin = {200, 0}
+		-- get the size from a table
+
+		local w = 400
+		local h = 350
+
+		local x = -w
+		local y = lg.getHeight() - 160
+
+
+		self.position = {x, y, 1}
+		self.size = {w, h}
+		self.origin = {w*0.5, h}
 		self.scale = {1, 1}
 
 
-		-- @todo
-		-- pack the suitcase with various sized items
-		-- and animals
+		self:pack()
 
-		local threshold = 0.3
-		local min = 1
-		local max = 5
-
-
-		-- these parameters should be passed or the content could be generated and then stuffed into the suitcase
-
-		local animals = {}
-		if math.random() > threshold then
-			local n = min + math.floor(max * math.random())
-			for i = 1, n do
-				local animal = Animal()
-				animal.parent = self
-				animal.positioning = 'relative'
-				table.insert(animals, animal)
-			end
-			self.answer = n
-
-		else
-			self.answer = 0
-		end
 
 		self.solved = false
-
-		-- i will really want a table for everything generated as well
-		self.animals = animals
-
-
 
 		manager:register(self)
 
@@ -76,11 +57,11 @@ Suitcase = class{
 			lg.setColor(238, 85, 85)
 			lg.rectangle('fill', x - ox, y - oy, w * sx, h * sy)
 		elseif mode == 'scanner' then
-			lg.setColor(188, 85, 85)
-			lg.rectangle('fill', x - ox, y - oy, w * sx, h * sy)
+			lg.setColor(170, 170, 170, 100)
+			lg.rectangle('line', x - ox, y - oy, w * sx, h * sy)
 			local answer = self.answer
 			lg.setColor(255, 255, 255)
-			fonts:draw('Inconsolata.otf', 28, answer, x + 15, y + 15)
+			fonts:draw('Inconsolata.otf', 28, answer, x - ox + 15, y - oy + 15)
 		end
 
 	end,
@@ -95,10 +76,140 @@ Suitcase = class{
 	end,
 
 	destroy = function(self)
-		local animals = self.animals
-		for i = 1, #animals do
-			animals[i]:_destroy()
+		local contents = self.contents
+		if #contents > 0 then
+			for i = 1, #contents do
+				contents[i]:_destroy()
+			end
 		end
 		self:_destroy()
+	end,
+
+	pack = function(self)
+
+		-- @todo
+		-- pack the suitcase with various sized items
+		-- and animals
+
+		local padding = 15
+		local buffer = 0.45
+		local threshold = 0.3
+		local resolution = 4
+		local min = 1
+		local max = 5
+
+		local size = self.size
+		local w, h = unpack(size)
+		local l, r, t, b = 0, w, 0, h
+		l = l + padding
+		r = r - padding * 2
+		t = t + padding
+		b = b - padding * 2
+
+		-- @todo some of these values should be determined by the suitcase type
+		local stock = {
+			[1] = {
+				type = Animal,
+				--stock = math.floor(max * math.random()),
+				stock = 3,
+			},
+			[2] = {
+				type = Item,
+				stock = 0,
+			}
+
+		}
+
+		-- these parameters should be passed or the content could be generated and then stuffed into the suitcase
+
+		local contents = {}
+
+		for _,entry in ipairs(stock) do
+			for i = 1, entry.stock do
+
+
+				local item = entry.type()
+				item.parent = self
+				item.positioning = 'relative'
+
+				-- @todo
+				-- items of the same type need to avoid overlapping
+
+				item:compute()
+
+				local bound = item.bound
+				local il, ir, it, ib = unpack(bound.edges)
+
+				local w = ir - il
+				local h = ib - it
+
+				local attempts = 50
+
+				local placed
+				while not placed do
+
+					local fx = math.floor(math.random() * resolution) / (resolution - 1)
+					local fy = math.floor(math.random() * resolution) / (resolution - 1)
+
+					local pl = il + w
+					local pr = il + r
+					local pt = it + h
+					local pb = it + b
+
+					local x = l + pl + (pr - pl) * fx
+					local y = t + pt + (pb - pt) * fx
+
+					item.position[1] = x
+					item.position[2] = y
+
+					local allowed = true
+
+					-- @todo reject objects that are taller than suitcase...
+					-- @todo fix this....
+
+					if allowed then
+						for j,neighbor in ipairs(contents) do
+							if neighbor._type == item._type then
+								local sq = function(n) return math.pow(n, 2) end
+								local nx, ny = unpack(neighbor.position)
+								local distance = sq(x - nx) + sq(y - ny)
+								local dimension = math.min(w, h) * buffer
+								if distance < (dimension * dimension) then
+									allowed = false
+								end
+							end
+						end
+					end
+
+					if allowed then
+						table.insert(contents, item)
+						print('added')
+						placed = true
+						break
+					else
+						item:_destroy()
+						attempts = attempts - 1
+					end
+
+					if attempts == 0 then
+						placed = true
+						break
+					end
+				end
+
+			end
+		end
+
+		local animals = 0
+		for i = 1, #contents do
+			local item = contents[i]
+			if item._type == 'animal' then
+				animals = animals + 1
+			end
+		end
+
+		self.contents = contents
+		self.answer = animals
+
 	end,
 }

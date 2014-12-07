@@ -24,7 +24,7 @@ Background = class{
 		local sx, sy = unpack(scale)
 
 		if mode == 'scanner' then
-			lg.setColor(100, 100, 100)
+			lg.setColor(50, 50, 50)
 			lg.rectangle('fill', x, y, w, h)
 		end
 

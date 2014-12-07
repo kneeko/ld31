@@ -2,7 +2,7 @@ Base = class{
 	init = function(self)
 
 		local w = lg.getWidth()
-		local h = 140
+		local h = 160
 
 		local x = 0
 		local y = lg.getHeight()

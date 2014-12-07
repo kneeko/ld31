@@ -11,19 +11,21 @@ ViewportManager = class{
 		viewport.mode = 'default'
 		viewports[1] = viewport
 
-		local viewport = Viewport(0.7, 1.8)
+		local viewport = Viewport(0.7, 1.7)
 		viewport.mode = 'scanner'
+
+		-- @todo make these absolute
+		-- so that the bezel can always fit correctly
 		viewport.origin[2] = 0.55 * viewport.size[2]
-		viewport.position[2] = -0.05 * viewport.size[2]
+		viewport.position[2] = -0.025 * viewport.size[2]
 		-- @todo proper viewport offset
 
 		-- @temp shader test
 		local shader = lg.newShader('shaders/crt.frag')
 		local w, h = lg.getWidth(), lg.getHeight()
 		shader:send('inputSize', {w, h})
-		shader:send('outputSize', {w, h})
 		shader:send('textureSize', {w, h})
-		--viewport.shader = shader
+		viewport.shader = shader
 
 		viewports[2] = viewport
 

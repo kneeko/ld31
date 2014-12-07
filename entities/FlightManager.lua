@@ -1,9 +1,17 @@
 FlightManager = class{
 	init = function(self)
 
+		local flights = {}
+		self.flights = flights
+
 	end,
 
 	update = function(self, dt)
+
+		local flights = self.flights
+		for i = 1, #flights do
+			flights[i]:update(dt)
+		end
 
 	end,
 
@@ -18,14 +26,10 @@ FlightManager = class{
 
 	add = function(self)
 
-		print('added a flight')
-
+		local flights = self.flights
 		local flight = Flight()
-		local scene = self._scene
-		local manager = scene.suitcases
-		manager.suitcases = flight.suitcases
-		-- pass to manager
-
+		flight.parent = self
+		table.insert(flights, flight)
 
 	end,
 	

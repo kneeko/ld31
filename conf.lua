@@ -10,8 +10,8 @@ function love.conf(t)
 	t.window.title = 'ld31'
 	t.window.icon = nil
 
-	t.window.width = 900
-	t.window.height = 600
+	t.window.width = 1000
+	t.window.height = 700
 	
 	t.window.vsync = true
 	t.window.highdpi = true
