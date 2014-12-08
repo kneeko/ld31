@@ -3,19 +3,31 @@
 Bezel = class{
 	init = function(self)
 
+		local graphic = lg.newImage('assets/images/bezel.png')
+
 		local sw, sh = lg.getWidth(), lg.getHeight()
 	 	local w = sw * 0.7
 	 	local h = sh * 0.7
-		local x = (sw - w)*0.5
-		local y = (sh - h)*0.4
+
+		local x = sw*0.5
+		local y = 20
+
+	 	local w = graphic:getWidth()
+	 	local h = graphic:getHeight()
+
+	 	local scaling = 0.48
 
 		local position = {x, y, math.huge}
 		local size = {50, 50}
-		local scale = {1, 1}
+		local scale = {scaling, scaling}
+		local origin = {w*0.5, 0}
 
 		self.position = position
 		self.size = size
 		self.scale = scale
+		self.origin = origin
+
+		self._uncullable = true
 
 		local alarm = Alarm()
 		alarm.parent = self
@@ -26,6 +38,8 @@ Bezel = class{
 		lives.parent = self
 		lives.positioning = 'relative'
 		self.lives = lives
+
+		self.graphic = graphic
 
 		local axles = {}
 
@@ -46,8 +60,8 @@ Bezel = class{
 		local left = Axle()
 		local right = Axle()
 
-		left.position[1] = 90
-		right.position[1] = sw - 60
+		left.position[1] = 75
+		right.position[1] = sw - 45
 
 		table.insert(axles, left)
 		table.insert(axles, right)
@@ -67,9 +81,19 @@ Bezel = class{
 
 		if mode == 'interface' then
 
-			lg.setColor(205, 191, 180)
-			lg.setLineWidth(8)
-			lg.rectangle('line', x, y, lg.getWidth() * 0.7, lg.getHeight() * 0.7)
+			local scale = self.scale
+			local sx, sy = unpack(scale)
+			local size = self.size
+			local w, h = unpack(size)
+
+			local origin = self.origin
+			local ox, oy = unpack(origin)
+			local angle = 0
+
+			-- draw the rest of the bezel here?
+			local graphic = self.graphic
+			lg.setColor(255, 255, 255)
+			lg.draw(graphic, x, y, angle, sx, sy, ox, oy)
 
 		end
 	end,

@@ -23,11 +23,22 @@ function love.load()
 
 	sprites = {
 		animals = {
-			lg.newImage('assets/images/marlin.png'),
 			lg.newImage('assets/images/rabbit.png'),
-			lg.newImage('assets/images/gazelle.png'),
 			lg.newImage('assets/images/duck.png'),
 			lg.newImage('assets/images/octopus.png'),
+			lg.newImage('assets/images/gazelle.png'),
+			lg.newImage('assets/images/marlin.png'),
+		},
+		misc = {
+			lg.newImage('assets/images/brush.png'),
+			lg.newImage('assets/images/camera.png'),
+			lg.newImage('assets/images/charger.png'),
+			lg.newImage('assets/images/flipflops.png'),
+			lg.newImage('assets/images/headphones.png'),
+			lg.newImage('assets/images/laptop.png'),
+			lg.newImage('assets/images/notebook.png'),
+			lg.newImage('assets/images/shirts.png'),
+			lg.newImage('assets/images/thermos.png'),
 		}
 	}
 

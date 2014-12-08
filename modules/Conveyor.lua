@@ -13,7 +13,7 @@ Conveyor = class{
 		self.queue = queue
 		self.timer = 0
 
-		self.speed = 600
+		self.speed = 500
 		self.throttle = 0
 		self.acceleration = 2
 		self.moving = false
@@ -29,7 +29,7 @@ Conveyor = class{
 		-- keeps track of how far this conveyor has traveled
 		self.traveled = 0
 		self.upcoming = 0
-		self.step = 500
+		self.step = 50
 
 		-- this value will depend on the size of the largest suitcase and the screen width
 		self.max = lg.getWidth() * (1 + 0.5)
@@ -100,8 +100,10 @@ Conveyor = class{
 				if (not suitcase.missed) and (not suitcase.solved) then
 					-- only if active
 					if active and (not aborting) then
-						suitcase.missed = true
-						signal.emit('wrong')
+						if suitcase.answer > 0 then
+							suitcase.missed = true
+							signal.emit('wrong')
+						end
 					end
 				end
 			end
@@ -267,6 +269,7 @@ Conveyor = class{
 		-- remove the selected object from the scanner input
 		local scanner = self.scanner
 		scanner.scanning = nil
+		scanner.stopwatch:hide()
 
 	end,
 
@@ -289,10 +292,13 @@ Conveyor = class{
 			local queue = self.queue
 			table.insert(queue, suitcase)
 
+			local size = suitcase.size
+			local w, h = unpack(size)
+
 			local upcoming = self.upcoming
 			local step = self.step
 
-			self.upcoming = upcoming + step
+			self.upcoming = upcoming + step + w * 1.5
 
 			print('processing suitcase ' .. suitcase._key)
 

@@ -49,6 +49,8 @@ Axle = class{
 		local radius = self.radius
 
 		if mode == 'interface' then
+
+			lg.setLineWidth(8)
 			
 			lg.setColor(205, 191, 180)
 			lg.circle('fill', x - ox, y - oy, radius, 32)

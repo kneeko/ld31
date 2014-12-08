@@ -16,11 +16,22 @@ Flight = class{
 
 		local delay = 0.5
 		local f = function()
+
+			local parent = self.parent
+			local difficulty = parent.difficulty
+			local scene = parent._scene
+
+			local speed = 550 + 50 * difficulty
+
+			local scanner = scene.scanner
+			local conveyor = scanner.conveyor
+			conveyor.speed = speed
+
 			local n = 8
 			local suitcases = {}
 			for i = 1, n do
 				
-				local suitcase = Suitcase()
+				local suitcase = Suitcase(difficulty)
 				suitcase._active = false
 				suitcase._visible = false
 				table.insert(suitcases, suitcase)
@@ -30,8 +41,6 @@ Flight = class{
 			-- pass to suitcase manager
 			self.suitcases = suitcases
 
-			local parent = self.parent
-			local scene = parent._scene
 			
 			local manager = scene.suitcases
 			local scanner = scene.scanner

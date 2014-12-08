@@ -57,7 +57,7 @@ Scene = class{
 		local scanner = self.scanner
 		--scanner:draw()
 
-		lg.print(self.misses, 15, 15)
+		lg.print(self.counter, 15, 15)
 
 	end,
 
@@ -130,7 +130,7 @@ Scene = class{
 		local suitcases = self.suitcases
 
 		scanner:abort()
-		
+
 		suitcases:flush()
 
 	end,

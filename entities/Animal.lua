@@ -8,7 +8,7 @@ wiggling the vertices should work
 
 
 Animal = class{
-	init = function(self)
+	init = function(self, difficulty)
 
 		self._type = 'animal'
 		self._debug = false
@@ -20,13 +20,22 @@ Animal = class{
 		-- randomly select this asset
 		-- with parameters
 		local choices = sprites.animals
-		local selected = 1 + math.floor(#choices * math.random())
+		local selected = 1 + math.floor(difficulty * math.random())
 		local graphic = choices[selected]
 		local w = graphic:getWidth()
 		local h = graphic:getHeight()
 
 		local angle = math.pi * 2 * math.random()
 		local scale = 0.4 + 0.1 * math.random()
+
+		local r, g, b, a = 255, 255, 255, 255
+		local variance = 35
+		r = r - variance * math.random()
+		g = g - variance * math.random()
+		b = b - variance * math.random()
+
+		local color = {r, g, b, a}
+		self.color = color
 
 		self.position = {x, y, 0.5}
 		self.size = {w, h}
@@ -46,6 +55,8 @@ Animal = class{
 		self.wiggling = 0
 		self.duration = 0.7
 		self.step = step
+
+		self.callbacks = {'inputpressed', 'inputreleased'}
 
 		manager:register(self)
 
@@ -74,6 +85,11 @@ Animal = class{
 		local rotation = self.rotation
 		self.angle = rotation + angle
 
+		local dragging = self.dragging
+		if dragging then
+
+		end
+
 	end,
 
 	draw = function(self, mode, ...)
@@ -92,9 +108,29 @@ Animal = class{
 
 		if mode == 'scanner' then
 			local graphic = self.graphic
-			lg.setColor(255, 255, 255)
+			local color = self.color
+			lg.setColor(color)
 			lg.draw(graphic, x, y, angle, sx, sy, ox, oy)
 		end
+
+	end,
+
+	inputpressed = function(self, identifier, x, y, id, pressure, source, project)
+
+
+		if tonumber(id) or id == 'l' then 
+			if self:intersecting(identifier, x, y) and not self.raised then
+
+				self.dragging = source
+			end
+		end
+
+	end,
+
+	inputreleased = function(self, identifier, x, y, id, pressure)
+
+		-- release
+		self.dragging = nil
 
 	end,
 

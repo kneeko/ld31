@@ -16,8 +16,8 @@ ViewportManager = class{
 
 		-- @todo make these absolute
 		-- so that the bezel can always fit correctly
-		viewport.origin[2] = 0.55 * viewport.size[2]
-		viewport.position[2] = -0.025 * viewport.size[2]
+		viewport.origin[2] = 0.525 * viewport.size[2]
+		viewport.position[2] = 0.01 * viewport.size[2]
 		-- @todo proper viewport offset
 
 		-- @temp shader test

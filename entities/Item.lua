@@ -2,20 +2,41 @@ Item = class{
 	init = function(self)
 
 		self._type = 'item'
-		self._debug = true
+		self._debug = false
 
 		-- @todo lookup table for different images
 		-- to determine the size
 
-		local x = 30 + 300 * math.random()
-		local y = 30 + 100 * math.random()
+		local choices = sprites.misc
+		local selected = 1 + math.floor(#choices * math.random())
+		local graphic = choices[selected]
 
-		local w = 80
-		local h = 50
+		local x = 0
+		local y = 0
 
+		local w = graphic:getWidth()
+		local h = graphic:getHeight()
+
+		local scale = 0.7
+		local angle = math.pi * 2 * math.random()
+
+		local r, g, b, a = 255, 255, 255, 30
+		local variance = 35
+		r = r - variance * math.random()
+		g = g - variance * math.random()
+		b = b - variance * math.random()
+
+		local color = {r, g, b, a}
+		self.color = color
+
+
+		self.graphic = graphic
 		self.position = {x, y, 0.8}
 		self.size = {w, h}
 		self.scale = {1, 1}
+		self.origin = {w*0.5, h*0.5}
+		self.angle = angle
+		self.scale = {scale, scale}
 
 		self.overrides = {parallax = 1}
 
@@ -37,9 +58,18 @@ Item = class{
 		local sx, sy = unpack(scale)
 
 		if mode == 'scanner' then
-			lg.setColor(200, 220, 190)
 
-			lg.rectangle('line', x, y, w, h)
+			local origin = self.origin
+			local ox, oy = unpack(origin)
+			local angle = self.angle
+
+			local graphic = self.graphic
+			local color = self.color
+
+			lg.setColor(color)
+			lg.draw(graphic, x, y, angle, sx, sy, ox, oy)
+
+			--lg.rectangle('line', x, y, w, h)
 		end
 
 	end,

@@ -7,15 +7,24 @@
 -- suitcase should have its own timer
 
 Suitcase = class{
-	init = function(self)
+	init = function(self, difficulty)
 
 		self._type = 'suitcase'
 		self._debug = false
 
 		-- get the size from a table
 
-		local w = 400
-		local h = 350
+		local sizes = {
+			{400, 350},
+			{200, 350},
+			{200, 260},
+			{500, 290},
+		}
+
+		local index = 1 + math.floor(#sizes * math.random())
+
+		local size = sizes[index]
+		local w, h = unpack(size)
 
 		local x = -w
 		local y = lg.getHeight() - 160
@@ -25,7 +34,7 @@ Suitcase = class{
 		self.size = {w, h}
 		self.origin = {w*0.5, h}
 		self.scale = {1, 1}
-
+		self.difficulty = difficulty
 
 		self:pack()
 
@@ -53,6 +62,7 @@ Suitcase = class{
 		local sx, sy = unpack(scale)
 
 
+		lg.setLineWidth(8)
 		if mode == 'default' then
 			lg.setColor(238, 85, 85)
 			lg.rectangle('fill', x - ox, y - oy, w * sx, h * sy)
@@ -61,7 +71,7 @@ Suitcase = class{
 			lg.rectangle('line', x - ox, y - oy, w * sx, h * sy)
 			local answer = self.answer
 			lg.setColor(255, 255, 255)
-			fonts:draw('Inconsolata.otf', 28, answer, x - ox + 15, y - oy + 15)
+			--fonts:draw('Inconsolata.otf', 28, answer, x - ox + 15, y - oy + 15)
 		end
 
 	end,
@@ -93,7 +103,9 @@ Suitcase = class{
 		-- pack the suitcase with various sized items
 		-- and animals
 
-		local padding = 15
+		local difficulty = self.difficulty
+
+		local padding = 30
 		local buffer = 0.45
 		local threshold = 0.3
 		local resolution = 4
@@ -109,20 +121,25 @@ Suitcase = class{
 		b = b - padding * 2
 
 		-- @todo some of these values should be determined by the suitcase type
+		-- @todo stock should go up with difficutly?
+		local amount = 2 + math.floor(difficulty * math.random())
+		local roll = math.random()
+		if roll > 0.75 then
+			amount = 0
+		end
+
 		local stock = {
 			[1] = {
 				type = Animal,
 				--stock = math.floor(max * math.random()),
-				stock = 3,
+				stock = amount,
 			},
 			[2] = {
 				type = Item,
-				stock = 0,
+				stock = 10,
 			}
 
 		}
-
-		print(stock[1].stock)
 
 		-- these parameters should be passed or the content could be generated and then stuffed into the suitcase
 
@@ -132,7 +149,7 @@ Suitcase = class{
 			for i = 1, entry.stock do
 
 
-				local item = entry.type()
+				local item = entry.type(difficulty)
 				item.parent = self
 				item.positioning = 'relative'
 
@@ -170,6 +187,13 @@ Suitcase = class{
 
 					-- @todo reject objects that are taller than suitcase...
 					-- @todo fix this....
+
+					if allowed then
+						local fudge = 1.4
+						if (w > size[1] * fudge) or (h > size[2] * fudge) then
+							allowed = false
+						end
+					end
 
 					if allowed then
 						for j,neighbor in ipairs(contents) do

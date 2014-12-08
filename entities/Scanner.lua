@@ -17,6 +17,10 @@ Scanner = class{
 
 		self.active = false
 
+		local stopwatch = Stopwatch()
+		stopwatch.scanner = self
+		self.stopwatch = stopwatch
+
 	end,
 
 	update = function(self, dt)
@@ -58,6 +62,8 @@ Scanner = class{
 
 	scan = function(self, suitcase)
 		self.scanning = suitcase
+		local stopwatch = self.stopwatch
+		stopwatch:show(suitcase)
 	end,
 
 	clear = function(self)
@@ -112,6 +118,9 @@ Scanner = class{
 			end
 		end
 
+	end,
+
+	keyreleased = function(self, key, code)
 	end,
 
 	guess = function(self, suitcase, guess, success, failure)
