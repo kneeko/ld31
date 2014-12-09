@@ -67,7 +67,6 @@ Scene = class{
 	end,
 
 	draw = function(self)
-
 	end,
 
 	keypressed = function(self, key, code)

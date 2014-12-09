@@ -248,9 +248,6 @@ Animal = class{
 			popup.velocity[2] = vy * (0.2 + 0.05 * math.random())
 			popup.angle = angle + math.pi * 0.5
 
-
-
-
 			
 		end
 

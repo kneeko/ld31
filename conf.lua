@@ -16,6 +16,7 @@ function love.conf(t)
 	t.window.resizable = false
 	
 	t.window.vsync = true
-	t.window.highdpi = true
+	-- this may break on retina displays?
+	-- t.window.highdpi = true
 
 end

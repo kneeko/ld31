@@ -214,12 +214,19 @@ ObjectManager = class{
 		if index[method] then
 			for _,key in ipairs(index[method]) do
 				local object = objects[key]
-				if object[method] then
-					object[method](object, ...)
+				if object then
+					if object[method] then
+						object[method](object, ...)
+					else
+						local identifier = self._identifier:get()
+						local err = string.format('[%s] object %s with type "%s" has not defined callback %s.',
+							identifier, object._key, object._type, method)
+						print(err)
+					end
 				else
 					local identifier = self._identifier:get()
-					local err = string.format('[%s] object %s with type "%s" has not defined callback %s.',
-						identifier, object._key, object._type, method)
+					local err = string.format('[%s] object key %s points to nil while propogating method %s.',
+						identifier, key, mode)
 					print(err)
 				end
 			end

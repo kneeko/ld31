@@ -455,7 +455,7 @@ ViewportController = class{
 			-- @todo
 			-- only pass to the screen?
 
-			local whitelist = {viewports[2]}
+			local whitelist = {viewports[1], viewports[2]}
 
 			for _,viewport in ipairs(whitelist) do
 

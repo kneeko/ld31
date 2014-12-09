@@ -17,6 +17,8 @@ Button = class{
 			down = down,
 		}
 
+		self._debug = false
+
 		self.graphics = graphics
 		self.position = position
 		self.size = size
@@ -24,7 +26,7 @@ Button = class{
 
 		self.status = 'up'
 
-		self.callbacks = {'keypressed', 'keyreleased'}
+		self.callbacks = {'keypressed', 'keyreleased', 'inputpressed', 'inputreleased'}
 
 		manager:register(self)
 
@@ -64,6 +66,27 @@ Button = class{
 
 	keyreleased = function(self, key, code)
 		if key == ' ' then
+			self.status = 'up'
+			push:setPitch(0.7)
+			push:play()
+		end
+	end,
+
+	inputpressed = function(self, identifier, x, y, id, pressure, source, project)
+		-- @todo
+		-- in order to resolve this correctly
+		-- i will need to pass the viewport's "mode" as well
+		--[[
+		if self:intersecting(identifier, x, y) then
+			self.status = 'down'
+			push:setPitch(0.5)
+			push:play()
+		end
+		]]--
+	end,
+
+	inputreleased = function(self, identifier, x, y, id, pressure, source, project)
+		if self.status == 'down' then
 			self.status = 'up'
 			push:setPitch(0.7)
 			push:play()
