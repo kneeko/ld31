@@ -92,12 +92,9 @@ Scanner = class{
 		-- and do so
 
 		if key == ' ' then
-			if active then
-				--conveyor:toggle()
-			end
 			conveyor.slowed = true
 		end
-		
+
 		local button = bezel.button
 		button:keypressed(key, code)
 
@@ -105,9 +102,6 @@ Scanner = class{
 
 	keyreleased = function(self, key, code)
 		if key == ' ' then
-			if active then
-				--conveyor:toggle()
-			end
 			local conveyor = self.conveyor
 			conveyor.slowed = false
 		end

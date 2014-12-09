@@ -1,7 +1,7 @@
 function love.load()
 
 	-- set a background before loading dependencies
-	local bg = {113, 183, 193}
+	local bg = {50, 50, 50}
 	love.graphics.setBackgroundColor(bg)
 	love.graphics.clear()
 	love.graphics.present()
