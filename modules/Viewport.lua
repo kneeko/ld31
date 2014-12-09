@@ -69,13 +69,18 @@ Viewport = class{
 
 	update = function(self, dt)
 
-		
 
-		local limiter = self.limiter
-		limiter:update(dt)
+		-- @todo
+		-- add a rumbler to the conveyor
 
 		local position = self.position
 		local x, y, z = unpack(position)
+
+		local rumble = shake
+		position[2] = y + rumble
+
+		local limiter = self.limiter
+		limiter:update(dt)
 		
 		-- update the bound
 		local bound = self.bound

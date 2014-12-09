@@ -9,7 +9,21 @@ Flight = class{
 		-- set the scanner base/bezel label (?)
 		-- generate suitcases for suitcase manager
 
-		Notification('Incoming Flight')
+		local header = 'New Arrival'
+		-- pick random location
+		-- pick flight number
+
+		local letters = {'A', 'B', 'C', 'D', 'E', 'F', 'G'}
+		local index = math.min(1 + math.ceil(#letters * math.random()), #letters)
+		local letter = letters[index]
+
+		local code = 999 + math.ceil(9000 * math.random())
+
+		local index = math.min(1 + math.ceil(#cities * math.random()), #cities)
+		local city = cities[index]
+
+		local help = ("%s, %s%s"):format(city, letter, code)
+		local prompt = Prompt(header, help, nil, 2.4)
 
 		-- @todo
 		-- add a variable delay for this
@@ -21,13 +35,17 @@ Flight = class{
 			local difficulty = parent.difficulty
 			local scene = parent._scene
 
-			local speed = 550 + 50 * difficulty
+			local speed = 350 + 100 * difficulty
+
+			if difficulty == 1 then
+				speed = 300
+			end
 
 			local scanner = scene.scanner
 			local conveyor = scanner.conveyor
 			conveyor.speed = speed
 
-			local n = 8
+			local n = 8 + 2 * difficulty
 			local suitcases = {}
 			for i = 1, n do
 				
@@ -50,6 +68,8 @@ Flight = class{
 			local conveyor = scanner.conveyor
 			manager.suitcases = suitcases
 			conveyor:resume()
+
+			ding:play()
 
 			print('generated ' .. n .. ' suitcases')
 

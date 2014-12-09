@@ -15,17 +15,14 @@ Scene = class{
 		self.suitcases = suitcases
 		self.scanner = scanner
 
+		cities = require('cities')
+
 		-- so..., maybe a callback when the suitcases run out?
 
 		-- flights passes a series of suitcase params to the suitcase manager when a new flight arrives
 		-- suitcases passes those suitcases to the scanner
 
 		--self:proceed()
-
-		self.counter = 0
-		signal.register('correct', function(n)
-			self.counter = self.counter + n
-		end)
 
 		self.misses = 0
 		signal.register('wrong', function()
@@ -34,10 +31,30 @@ Scene = class{
 
 		signal.register('finish', function() self:finish() end)
 
-
-		local prompt = Prompt('count the animals\npress space to start the conveyor')
+		local header = 'Try Saving Animals'
+		local help = 'press space to begin'
+		local prompt = Prompt(header, help)
 		prompt.callback = function() self:start() end
 		self.prompt = prompt
+
+		-- play audio track
+		local soundtrack = la.newSource('assets/audio/MuteGroove.mp3', 'stream')
+		soundtrack:setLooping(true)
+		soundtrack:play()
+
+		local wooshes = {
+			'assets/audio/woosh_1.mp3',
+			'assets/audio/woosh_2.mp3',
+			'assets/audio/woosh_3.mp3',
+		}
+
+		woosh = la.newSource(wooshes, 'static')
+
+		ding = la.newSource('assets/audio/ding.mp3', 'static')
+		boo = la.newSource('assets/audio/boo.wav', 'static')
+		push = la.newSource('assets/audio/type.wav', 'static')
+
+
 
 
 	end,
@@ -53,11 +70,6 @@ Scene = class{
 	end,
 
 	draw = function(self)
-
-		local scanner = self.scanner
-		--scanner:draw()
-
-		lg.print(self.counter, 15, 15)
 
 	end,
 
@@ -102,8 +114,6 @@ Scene = class{
 
 	start = function(self)
 
-		-- @todo properly init
-
 		local suitcases = self.suitcases
 		suitcases:flush()
 
@@ -115,8 +125,10 @@ Scene = class{
 		local scanner = self.scanner
 		scanner:clear()
 
+		-- reste score
+
 		local prompt = self.prompt
-		prompt:_destroy()
+		prompt.exiting = true
 		self.prompt = nil
 
 	end,
@@ -139,7 +151,11 @@ Scene = class{
 
 		print('game over')
 
-		local prompt = Prompt('game over')
+		local header = 'game over'
+		local help = 'press space to try again'
+		local score = tostring(points)
+		local prompt = Prompt(header, help, points)
+
 		prompt.callback = function() self:start() end
 		self.prompt = prompt
 

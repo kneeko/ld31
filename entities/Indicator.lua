@@ -6,7 +6,7 @@
 Indicator = class{
 	init = function(self)
 
-		local position = {0, 0, 1}
+		local position = {500, 60, 1}
 
 		local w = 20
 		local h = 20
@@ -21,9 +21,12 @@ Indicator = class{
 		self.scale = scale
 		self.origin = origin
 
+		self.color = {120, 82, 82, 140}
+
+
 		-- @todo
 		-- this animation should last a short while
-		self.timer = 0
+		self.timer = math.pi * 2 * math.random()
 
 		manager:register(self)
 
@@ -31,10 +34,7 @@ Indicator = class{
 
 	update = function(self, dt)
 
-		self.timer = math.max(self.timer - dt, 0)
-		if self.timer == 0 then
-			self.color = {100, 255, 200}
-		end
+		self.timer = self.timer + dt
 
 	end,
 
@@ -51,22 +51,38 @@ Indicator = class{
 		local ox, oy = unpack(origin)
 
 		if mode == 'interface' then
+
 			local color = self.color
 			lg.setColor(color)
-			if self.lit then
-				lg.setColor(255, 0, 0)
+
+			local lit = self.lit
+			if lit then
+				lg.setColor(200, 82, 82)
 			end
-			lg.rectangle('fill', x - ox, y - oy, w, h)
+			local r = w*0.5
+
+			lg.setLineWidth(3)
+			lg.circle('fill', x, y, r, 32)
+
+			lg.setColor(175, 160, 149)
+			lg.circle('line', x, y, r, 32)
+
+			if lit then
+				lg.setBlendMode('additive')
+				local timer = self.timer
+				local a = 40 + 6 * math.sin(timer * math.pi * 3)
+				local r = (r * 1.7) + 1 * math.sin(timer * math.pi * 3)
+				lg.setColor(255, 0, 0, a)
+				lg.circle('fill', x, y, r, 32)
+				lg.setBlendMode('alpha')
+
+				lg.setColor(255, 0, 0, a * 0.2)
+				lg.circle('line', x, y, r, 32)
+				lg.setBlendMode('alpha')
+			end
+
+
 		end
 
-	end,
-
-	set = function(self, state)
-		if state == 'success' then
-			self.color = {50, 216, 47}
-		else
-			self.color = {216, 50, 47}
-		end
-		self.timer = 0.8
 	end,
 }

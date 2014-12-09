@@ -10,13 +10,16 @@ Base = class{
 		local position = {x, y, 1}
 
 		local size = {w, h}
-		local scale = {1, 1}
-		local origin = {0, h}
+		local scale = {2, 1}
+		local origin = {w*0.5, h}
 
 		self.position = position
 		self.size = size
 		self.scale = scale
 		self.origin = origin
+
+		local belt = Belt(x, x + w)
+		self.belt = belt
 
 		-- this should contain the axles
 		-- not the bezel
@@ -45,10 +48,14 @@ Base = class{
 			lg.setColor(191, 178, 168)
 			lg.rectangle('fill', x - ox, y - oy, w * sx, h * sy)
 
+			-- @todo do this in the belt
 			lg.setColor(150, 150, 150)
+			lg.setLineWidth(8)
 			lg.line(x - ox, y - oy, x - ox + w * sx, y - oy)
 
 		end
+
+		-- scanner mode...
 
 	end,
 }

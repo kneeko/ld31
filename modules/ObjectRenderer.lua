@@ -110,7 +110,7 @@ ObjectRenderer = class{
 					if object.draw then
 						object:draw(mode, object:context(projection, identifier))
 					end
-					if object._debug and mode == 'scanner' then
+					if object._debug then
 						object:debug(identifier)
 					end
 					-- hacky fix for ensuring an object isn't in the drawstack twice

@@ -3,6 +3,16 @@ Notification = class{
 
 		-- incoming flight from JFK [flag]?
 
+		-- plane
+		-- new arrival
+		-- City, AA1111
+
+		local string = 'New Arrival'
+		local subtitle = 'Seattle, B5152'
+
+
+
+
 		local x = lg.getWidth() * 0.5
 		local y = lg.getHeight() * 0.5
 
@@ -25,6 +35,9 @@ Notification = class{
 		self.lifetime = 1
 
 		print('notifying: ' .. string)
+
+
+
 
 		manager:register(self)
 

@@ -13,7 +13,7 @@ Conveyor = class{
 		self.queue = queue
 		self.timer = 0
 
-		self.speed = 500
+		self.speed = 0
 		self.throttle = 0
 		self.acceleration = 2
 		self.moving = false
@@ -35,6 +35,17 @@ Conveyor = class{
 		self.max = lg.getWidth() * (1 + 0.5)
 		self.limit = lg.getWidth() * 0.8
 
+		local rumbler = Rumbler()
+		self.rumbler = rumbler
+
+		local grind = la.newSource('assets/audio/grinding.mp3', 'static')
+		grind:setVolume(0)
+		grind:setLooping(true)
+		grind:setPitch(0.7 + self.throttle)
+		grind:play()
+
+		self.grind = grind
+
 	end,
 
 	update = function(self, dt)
@@ -53,12 +64,26 @@ Conveyor = class{
 			self.moving = false
 		end
 
-		if moving and (not flushing) then
+		local slowed = self.slowed
+		if moving and slowed and (not flushing) then
+			local rate = 0.3
+			if throttle > rate then
+				self.throttle = math.max(throttle - dt * acceleration, rate)
+			else
+				self.throttle = math.min(throttle + dt * acceleration, rate)
+			end
+		elseif moving and (not flushing) then
 			self.throttle = math.min(throttle + dt * acceleration, 1)
 		else
 			self.throttle = math.max(throttle - dt * acceleration, 0)
 		end
 
+		local rumbler = self.rumbler
+		rumbler.throttle = throttle
+
+		local grind = self.grind
+		grind:setPitch(0.7 + self.throttle + 0.3 * math.min(speed / 700, 1))
+		grind:setVolume(self.throttle * 0.3)
 
 		local dx
 		local throttle = self.throttle
@@ -100,9 +125,22 @@ Conveyor = class{
 				if (not suitcase.missed) and (not suitcase.solved) then
 					-- only if active
 					if active and (not aborting) then
-						if suitcase.answer > 0 then
+						local solved = suitcase:check()
+						if solved then
+							suitcase.solved = true
+						else
 							suitcase.missed = true
 							signal.emit('wrong')
+
+							boo:play()
+
+							-- add popup
+							local popup = Popup('-1 life')
+							popup.position[1] = lg.getWidth() * 0.5
+							popup.position[2] = lg.getHeight() * 0.5
+							popup.velocity[2] = -50
+
+
 						end
 					end
 				end
@@ -298,7 +336,7 @@ Conveyor = class{
 			local upcoming = self.upcoming
 			local step = self.step
 
-			self.upcoming = upcoming + step + w * 1.5
+			self.upcoming = upcoming + step + w * 2
 
 			print('processing suitcase ' .. suitcase._key)
 

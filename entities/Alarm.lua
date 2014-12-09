@@ -1,12 +1,22 @@
 Alarm = class{
 	init = function(self)
 
+		self._debug = false
 
-		local position = {25, -4, 1}
-		local size = {50, 50}
-		local scale = {1, 1}
-		local origin = {0, 50}
+		local graphic = lg.newImage('assets/images/alarm.png')
 
+		local w = graphic:getWidth()
+		local h = graphic:getHeight()
+
+		local scaling = 0.4
+
+
+		local position = {500, 49, 1}
+		local size = {w, h}
+		local scale = {scaling, scaling}
+		local origin = {w*0.5, h}
+
+		self.graphic = graphic
 		self.position = position
 		self.size = size
 		self.scale = scale
@@ -30,6 +40,7 @@ Alarm = class{
 	end,
 
 	draw = function(self, mode, ...)
+
 		local position = ...
 		local x, y = unpack(position)
 
@@ -42,9 +53,7 @@ Alarm = class{
 		local ox, oy = unpack(origin)
 
 		if mode == 'interface' then
-			local color = self.color
-			lg.setColor(color)
-			lg.rectangle('fill', x - ox, y - oy, w, h)
+
 		end
 
 	end,

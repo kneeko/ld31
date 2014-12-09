@@ -2,7 +2,7 @@ Stopwatch = class{
 	init = function(self)
 
 		local x = lg.getWidth() * 0.225
-		local y = lg.getHeight() - 135
+		local y = lg.getHeight() - 145
 		local h = 5
 		local w = lg.getWidth() * 0.55
 
@@ -21,7 +21,7 @@ Stopwatch = class{
 		self.color = {130, 130, 130, 0}
 
 		self.timer = 0
-		self.duration = 2
+		self.duration = 5
 		self.active = false
 
 		manager:register(self)
@@ -83,7 +83,7 @@ Stopwatch = class{
 		self.active = true
 		self.suitcase = suitcase
 
-		local duration = suitcase.duration or 2
+		local duration = suitcase.duration or self.duration
 		local timer = suitcase.remainder or 0
 
 		-- get the timer  and duration from the suitcase

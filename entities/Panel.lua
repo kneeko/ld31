@@ -8,10 +8,12 @@
 Panel = class{
 	init = function(self)
 
-		local w = 120
-		local h = 50
+		local w = 140
+		local h = 45
 
-		local position = {95, -4, 1}
+		self._debug = false
+
+		local position = {46, 47, 1}
 		local size = {w, h}
 		local scale = {1, 1}
 		local origin = {0, h}
@@ -71,9 +73,6 @@ Panel = class{
 		local ox, oy = unpack(origin)
 
 		if mode == 'interface' then
-			local color = self.color
-			lg.setColor(color)
-			lg.rectangle('fill', x - ox, y - oy, w, h)
 		end
 
 	end,
@@ -93,6 +92,7 @@ Panel = class{
 			if not light.lit then
 				light.lit = true
 				found = true
+				signal.emit('shake')
 				if i == #lights then
 					-- game over
 					print('panel full, calling clear')

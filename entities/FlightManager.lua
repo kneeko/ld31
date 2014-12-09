@@ -3,7 +3,7 @@ FlightManager = class{
 
 		signal.register('completed', function() self:proceed() end)
 
-		self.difficulty = 1
+		self.difficulty = 0
 		self.completed = 0
 
 		-- @todo
@@ -78,6 +78,7 @@ FlightManager = class{
 		self.flights = flights
 		self.active = false
 		self.completed = 0
+		self.difficulty = 0
 
 	end,
 	

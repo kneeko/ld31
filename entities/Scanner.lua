@@ -70,6 +70,8 @@ Scanner = class{
 		self.scanning = nil
 		local bezel = self.bezel
 		bezel:clear()
+		local score = bezel.score
+		score.target = 0
 	end,
 
 	abort = function(self)
@@ -82,7 +84,6 @@ Scanner = class{
 
 		local conveyor = self.conveyor
 		local bezel = self.bezel
-		local alarm = bezel.alarm
 		local scanning = self.scanning
 		local active = self.active
 
@@ -114,20 +115,37 @@ Scanner = class{
 
 		if key == ' ' then
 			if active then
-				conveyor:toggle()
+				--conveyor:toggle()
 			end
+			conveyor.slowed = true
 		end
+
+		if key == 's' then
+			signal.emit('shake')
+		end
+
+		local button = bezel.button
+		button:keypressed(key, code)
 
 	end,
 
 	keyreleased = function(self, key, code)
+		if key == ' ' then
+			if active then
+				--conveyor:toggle()
+			end
+			local conveyor = self.conveyor
+			conveyor.slowed = false
+		end
+
+		local bezel = self.bezel
+		local button = bezel.button
+		button:keyreleased(key, code)
 	end,
 
 	guess = function(self, suitcase, guess, success, failure)
 
 		local bezel = self.bezel
-		local alarm = bezel.alarm
-
 		local active = self.active
 
 		local valid = active and tonumber(guess)
@@ -142,7 +160,6 @@ Scanner = class{
 			if correct then
 				suitcase.answer = 'correct!'
 				suitcase.solved = true
-				alarm:set('success')
 				if success then
 					success()
 				end
@@ -150,7 +167,6 @@ Scanner = class{
 				suitcase.answer = 'wrong'
 				suitcase.missed = true
 				suitcase.solved = true
-				alarm:set('failure')
 				signal.emit('wrong')
 				if failure then
 					failure()
@@ -166,9 +182,6 @@ Scanner = class{
 
 		return false
 
-	end,
-
-	keyreleased = function(self, key, code)
 	end,
 
 	start = function(self)

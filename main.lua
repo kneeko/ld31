@@ -8,6 +8,8 @@ function love.load()
 
 	require('dependencies')()
 
+	math.randomseed(os.time())
+
 	fonts = FontManager()
 	input = InputManager()
 
@@ -21,25 +23,80 @@ function love.load()
 	input:register(viewport, {'input', 'keyboard'})
 	input:register(scene, {'keyboard'})
 
+	-- @todo
+	-- scale these images to a more reasonable size
+	-- spritebatching
+
+	airplane = lg.newImage('assets/images/airplane.png')
+
 	sprites = {
-		animals = {
-			lg.newImage('assets/images/rabbit.png'),
-			lg.newImage('assets/images/duck.png'),
-			lg.newImage('assets/images/octopus.png'),
-			lg.newImage('assets/images/gazelle.png'),
-			lg.newImage('assets/images/marlin.png'),
+		default = {
+			animals = {
+				lg.newImage('assets/images/rabbit-color.png'),
+				lg.newImage('assets/images/duck-color.png'),
+				lg.newImage('assets/images/octopus-color.png'),
+				lg.newImage('assets/images/gazelle-color.png'),
+				lg.newImage('assets/images/marlin-color.png'),
+			},
+			misc = {
+				lg.newImage('assets/images/brush-color.png'),
+				lg.newImage('assets/images/camera-color.png'),
+				lg.newImage('assets/images/charger-color.png'),
+				lg.newImage('assets/images/flipflops-color.png'),
+				lg.newImage('assets/images/headphones-color.png'),
+				lg.newImage('assets/images/laptop-color.png'),
+				lg.newImage('assets/images/notebook-color.png'),
+				lg.newImage('assets/images/shirts-color.png'),
+				lg.newImage('assets/images/thermos-color.png'),
+			}
 		},
-		misc = {
-			lg.newImage('assets/images/brush.png'),
-			lg.newImage('assets/images/camera.png'),
-			lg.newImage('assets/images/charger.png'),
-			lg.newImage('assets/images/flipflops.png'),
-			lg.newImage('assets/images/headphones.png'),
-			lg.newImage('assets/images/laptop.png'),
-			lg.newImage('assets/images/notebook.png'),
-			lg.newImage('assets/images/shirts.png'),
-			lg.newImage('assets/images/thermos.png'),
-		}
+		scanner = {
+			animals = {
+				lg.newImage('assets/images/rabbit.png'),
+				lg.newImage('assets/images/duck.png'),
+				lg.newImage('assets/images/octopus.png'),
+				lg.newImage('assets/images/gazelle.png'),
+				lg.newImage('assets/images/marlin.png'),
+			},
+			misc = {
+				lg.newImage('assets/images/brush.png'),
+				lg.newImage('assets/images/camera.png'),
+				lg.newImage('assets/images/charger.png'),
+				lg.newImage('assets/images/flipflops.png'),
+				lg.newImage('assets/images/headphones.png'),
+				lg.newImage('assets/images/laptop.png'),
+				lg.newImage('assets/images/notebook.png'),
+				lg.newImage('assets/images/shirts.png'),
+				lg.newImage('assets/images/thermos.png'),
+			}
+		},
+	}
+
+	colors = {
+		{
+			color = {238, 85, 85},
+			shade = {228, 75, 75},
+		},
+		{
+			color = {83, 117, 76},
+			shade = {97, 127, 91},
+		},
+		{
+			color = {53, 58, 61},
+			shade = {34, 37, 39},
+		},
+		{
+			color = {142, 74, 69},
+			shade = {120, 66, 62},
+		},
+		{
+			color = {72, 62, 120},
+			shade = {67, 59, 106},
+		},
+		{
+			color = {72, 62, 120},
+			shade = {67, 59, 106},
+		},
 	}
 
 end

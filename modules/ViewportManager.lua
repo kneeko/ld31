@@ -7,17 +7,18 @@ ViewportManager = class{
 		-- force viewport order
 		-- figure out viewport ordering/culling bug
 
-		local viewport = Viewport(1, 1)
+		local viewport = Viewport(1, 0.7)
 		viewport.mode = 'default'
+		viewport.position[2] = -0.3 * viewport.size[2]
 		viewports[1] = viewport
 
-		local viewport = Viewport(0.7, 1.7)
+		local viewport = Viewport(0.68, 1.75)
 		viewport.mode = 'scanner'
 
 		-- @todo make these absolute
 		-- so that the bezel can always fit correctly
-		viewport.origin[2] = 0.525 * viewport.size[2]
-		viewport.position[2] = 0.01 * viewport.size[2]
+		viewport.origin[2] = 0.54 * viewport.size[2]
+		viewport.position[2] = -0.02 * viewport.size[2]
 		-- @todo proper viewport offset
 
 		-- @temp shader test

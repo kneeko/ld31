@@ -255,9 +255,9 @@ Entity = class{
 					lg.setColor(255, 255, 255)
 					--lg.circle('line', x + cx, y + cy, r)
 					lg.setColor(255, 255, 255, 155)
-					--lg.circle('line', x + cx, y + cy, r * fudging)
+					lg.circle('line', x + cx, y + cy, r * fudging)
 
-					--lg.print(tostring(self.type), x + 10, y - 7)
+					lg.print(tostring(self.type), x + 10, y - 7)
 
 					-- draw origin
 					--lg.setColor(255, 255, 255, 155)

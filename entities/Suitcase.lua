@@ -26,13 +26,20 @@ Suitcase = class{
 		local size = sizes[index]
 		local w, h = unpack(size)
 
-		local x = -w
+		local x = -w * 2 - 50
 		local y = lg.getHeight() - 160
+
+		local index = 1 + math.floor(#colors * math.random())
+		local color = colors[index].color
+		local shade = colors[index].shade
+
+		self.color = color
+		self.shade = shade
 
 
 		self.position = {x, y, 1}
 		self.size = {w, h}
-		self.origin = {w*0.5, h}
+		self.origin = {0, h}
 		self.scale = {1, 1}
 		self.difficulty = difficulty
 
@@ -64,8 +71,12 @@ Suitcase = class{
 
 		lg.setLineWidth(8)
 		if mode == 'default' then
-			lg.setColor(238, 85, 85)
+			local color = self.color
+			local shade = self.shade
+			lg.setColor(color)
 			lg.rectangle('fill', x - ox, y - oy, w * sx, h * sy)
+			lg.setColor(shade)
+			lg.rectangle('line', x - ox, y - oy, w * sx, h * sy)
 		elseif mode == 'scanner' then
 			lg.setColor(170, 170, 170, 100)
 			lg.rectangle('line', x - ox, y - oy, w * sx, h * sy)
@@ -91,10 +102,29 @@ Suitcase = class{
 		local contents = self.contents
 		if #contents > 0 then
 			for i = 1, #contents do
-				contents[i]:_destroy()
+				local item = contents[i]
+				if not item.tossed then
+					contents[i]:_destroy()
+				end
 			end
 		end
 		self:_destroy()
+	end,
+
+	check = function(self)
+
+		local animals = self.animals
+		local remaining = animals and #animals or 0
+		for _,animal in ipairs(animals) do
+			if animal.tossed then
+				remaining = remaining - 1
+			end
+		end
+
+		print(remaining .. ' animals left')
+
+		return remaining == 0
+
 	end,
 
 	pack = function(self)
@@ -113,7 +143,11 @@ Suitcase = class{
 		local max = 5
 
 		local size = self.size
+		local scale = self.scale
 		local w, h = unpack(size)
+		local sx, sy = unpack(scale)
+		w = w * sx
+		h = h * sy
 		local l, r, t, b = 0, w, 0, h
 		l = l + padding
 		r = r - padding * 2
@@ -227,16 +261,19 @@ Suitcase = class{
 			end
 		end
 
-		local animals = 0
+		local counter = 0
+		local animals = {}
 		for i = 1, #contents do
 			local item = contents[i]
 			if item._type == 'animal' then
-				animals = animals + 1
+				counter = counter + 1
+				table.insert(animals, item)
 			end
 		end
 
 		self.contents = contents
-		self.answer = animals
+		self.animals = animals
+		self.answer = counter
 
 	end,
 }

@@ -8,7 +8,7 @@ Axle = class{
 		local string = '--'
 		local w, h = font:getWidth(string), font:getHeight(string)
 
-		local position = {100, lg.getHeight() - 60, 1}
+		local position = {100, lg.getHeight() - 16, 1}
 		local size = {w, h}
 		local scale = {1, 1}
 		local origin = {w*0.5, h*0.5}

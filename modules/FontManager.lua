@@ -156,7 +156,7 @@ FontInstance = class{
 
 	set = function(self)
 		local size = self.size
-		self.font:set(size)
+		self.font:setFont(size)
 	end,
 
 	getWidth = function(self, string)

@@ -452,9 +452,13 @@ ViewportController = class{
 			local viewports = self.viewports
 			local x, y, id, pressure, source = ...
 
-			for i = 1, #viewports do
+			-- @todo
+			-- only pass to the screen?
 
-				local viewport = viewports[i]
+			local whitelist = {viewports[2]}
+
+			for _,viewport in ipairs(whitelist) do
+
 				local identifier = viewport._identifier:get()
 				local camera = viewport.camera
 

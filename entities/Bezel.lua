@@ -5,17 +5,19 @@ Bezel = class{
 
 		local graphic = lg.newImage('assets/images/bezel.png')
 
+		self._debug = false
+
 		local sw, sh = lg.getWidth(), lg.getHeight()
 	 	local w = sw * 0.7
 	 	local h = sh * 0.7
 
 		local x = sw*0.5
-		local y = 20
+		local y = 16
 
 	 	local w = graphic:getWidth()
 	 	local h = graphic:getHeight()
 
-	 	local scaling = 0.48
+	 	local scaling = 1
 
 		local position = {x, y, math.huge}
 		local size = {50, 50}
@@ -29,10 +31,15 @@ Bezel = class{
 
 		self._uncullable = true
 
-		local alarm = Alarm()
-		alarm.parent = self
-		alarm.positioning = 'relative'
-		self.alarm = alarm
+		local score = Score()
+		score.parent = self
+		score.positioning = 'relative'
+		self.score = score
+
+		local button = Button()
+		button.parent = self
+		button.positioning = 'relative'
+		self.button = button
 
 		local lives = Panel()
 		lives.parent = self
