@@ -54,9 +54,6 @@ Scene = class{
 		boo = la.newSource('assets/audio/boo.wav', 'static')
 		push = la.newSource('assets/audio/type.wav', 'static')
 
-
-
-
 	end,
 
 	update = function(self, dt)
@@ -76,22 +73,6 @@ Scene = class{
 	keypressed = function(self, key, code)
 		local scanner = self.scanner
 		scanner:keypressed(key, code)
-
-		--[[
-		if key == 'return' then
-			local flights = self.flights
-			flights.active = true
-			flights:add()
-			self.prompt:_destroy()
-			self.prompt = nil
-		end
-		]]--
-
-		if key == 'a' then
-			
-			self:clear()
-
-		end
 
 		if key == ' ' then
 			local prompt = self.prompt

@@ -144,18 +144,6 @@ function love.keypressed(key, code)
 		le.quit()
 	end
 
-	if key == 'r' then
-		--test:destroy()
-		if not test then
-			test = Suitcase()
-			test.position[1] = 550
-		else
-			test:destroy()
-			test = Suitcase()
-			test.position[1] = 550
-		end
-	end
-
 	input:keypressed(key, code)
 end
 

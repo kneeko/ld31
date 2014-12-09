@@ -91,39 +91,13 @@ Scanner = class{
 		-- if not scanning, we should find out what would be answered anyway
 		-- and do so
 
-		-- if the conveyor has been paused
-		if scanning then
-
-			local suitcase = scanning
-			local guessed = self:guess(suitcase, key)
-			if guessed then
-				conveyor:resume()
-			end
-
-		else
-
-			-- answer while still moving
-			local nearest, suitcase = conveyor:nearest()
-			if suitcase then
-				local guessed = self:guess(suitcase, key)
-				if guessed then
-					suitcase.solved = true
-				end
-			end
-
-		end
-
 		if key == ' ' then
 			if active then
 				--conveyor:toggle()
 			end
 			conveyor.slowed = true
 		end
-
-		if key == 's' then
-			signal.emit('shake')
-		end
-
+		
 		local button = bezel.button
 		button:keypressed(key, code)
 
